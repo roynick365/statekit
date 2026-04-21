@@ -1,0 +1,37 @@
+{
+  "name": "statekit-ui",
+  "version": "1.0.0",
+  "description": "A lightweight library of beautifully designed empty, loading, error, and success states for modern web apps.",
+  "main": "src/statekit.css",
+  "style": "src/statekit.css",
+  "files": [
+    "src/statekit.css",
+    "docs/index.html",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ui",
+    "css",
+    "components",
+    "empty-state",
+    "loading",
+    "error-state",
+    "skeleton",
+    "spinner",
+    "onboarding",
+    "frontend",
+    "design-system"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/statekit"
+  },
+  "homepage": "https://yourusername.github.io/statekit",
+  "bugs": {
+    "url": "https://github.com/yourusername/statekit/issues"
+  },
+  "author": "Michel Kite",
+  "license": "MIT"
+}
