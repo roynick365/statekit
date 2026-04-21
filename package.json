@@ -1,9 +1,13 @@
 {
   "name": "statekit-ui",
   "version": "1.0.0",
-  "description": "A lightweight library of beautifully designed empty, loading, error, and success states for modern web apps.",
+  "description": "A lightweight CSS library for empty, loading, error, and success states.",
   "main": "src/statekit.css",
   "style": "src/statekit.css",
+  "type": "module",
+  "exports": {
+    ".": "./src/statekit.css"
+  },
   "files": [
     "src/statekit.css",
     "docs/index.html",
@@ -15,6 +19,7 @@
     "ui",
     "css",
     "components",
+    "ui-states",
     "empty-state",
     "loading",
     "error-state",
@@ -22,16 +27,18 @@
     "spinner",
     "onboarding",
     "frontend",
-    "design-system"
+    "design-system",
+    "css-library",
+    "ux"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/roynick365/statekit/"
+    "url": "git+https://github.com/roynick365/statekit.git"
   },
   "homepage": "https://roynick365.github.io/statekit/",
   "bugs": {
     "url": "https://github.com/roynick365/statekit/issues"
   },
-  "author": "roynick365",
+  "author": "roynick365 (https://github.com/roynick365)",
   "license": "MIT"
 }
