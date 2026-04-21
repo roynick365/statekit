@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html>
+<head>
+                <style>.lw { font-size: 60px; font-family: Arial, Helvetica, sans-serif; }</style>
+            </head>
+            <body>
+                
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StateKit — UI States for Modern Web Apps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F6F2;
+      --surface: #FFFFFF;
+      --surface-2: #F0EEE8;
+      --border: #E4E1D8;
+      --text: #1A1917;
+      --text-2: #6B6860;
+      --text-3: #A09D97;
+      --accent: #2D5BE3;
+      --accent-soft: #EEF2FD;
+      --success: #1A7A4A;
+      --success-soft: #EDFAF3;
+      --warning: #B45309;
+      --warning-soft: #FEF3E2;
+      --error: #C0392B;
+      --error-soft: #FDF0EE;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+      --shadow-lg: 0 2px 8px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247,246,242,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--text);
+      color: #fff !important;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: #333 !important; color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 100px 40px 80px;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-2);
+      max-width: 500px;
+      margin: 0 auto 36px;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary { background: var(--text); color: #fff; }
+    .btn-primary:hover { background: #333; transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--surface-2); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      padding: 28px 40px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .stat-label { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    /* ── SECTION ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+    .section-header { margin-bottom: 48px; }
+    .section-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-sub {
+      color: var(--text-2);
+      font-size: 15px;
+      margin-top: 8px;
+      font-weight: 300;
+    }
+
+    /* ── COMPONENT GRID ── */
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .component-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .component-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    .component-preview {
+      padding: 40px 32px;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .component-meta {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .component-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .component-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .tag-empty { background: #EEF2FD; color: #2D5BE3; }
+    .tag-error { background: #FDF0EE; color: #C0392B; }
+    .tag-loading { background: #F5F0FF; color: #7C3AED; }
+    .tag-success { background: #EDFAF3; color: #1A7A4A; }
+    .tag-onboarding { background: #FEF3E2; color: #B45309; }
+
+    /* THE 8 STATEKIT COMPONENTS */
+
+    /* 1. Empty State */
+    .sk-empty {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-empty-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--surface-2);
+      border-radius: 16px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sk-empty-icon svg { color: var(--text-3); }
+    .sk-empty h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .sk-empty p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      font-weight: 300;
+    }
+    .sk-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+    .sk-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .sk-btn-ghost {
+      background: transparent;
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+    .sk-btn-ghost:hover { background: var(--surface-2); }
+
+    /* 2. Empty Search */
+    .sk-empty-search {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-search-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--surface-2);
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .sk-search-query {
+      display: inline-block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* 3. Error State */
+    .sk-error {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-error-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--error-soft);
+      border-radius: 16px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sk-error h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .sk-error p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      font-weight: 300;
+    }
+    .sk-error-actions { display: flex; gap: 8px; justify-content: center; }
+    .sk-btn-error { background: var(--error); color: #fff; }
+    .sk-btn-error:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* 4. 404 State */
+    .sk-404 {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-404-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 64px;
+      font-weight: 800;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 12px;
+      letter-spacing: -0.04em;
+    }
+    .sk-404 h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .sk-404 p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 18px;
+      font-weight: 300;
+    }
+
+    /* 5. Success State */
+    .sk-success {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-success-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--success-soft);
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: sk-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes sk-pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .sk-success h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .sk-success p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      font-weight: 300;
+    }
+    .sk-btn-success { background: var(--success); color: #fff; }
+
+    /* 6. Loading Spinner */
+    .sk-spinner-wrap {
+      text-align: center;
+      padding: 20px;
+    }
+    .sk-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: sk-spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes sk-spin { to { transform: rotate(360deg); } }
+    .sk-spinner-label {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 400;
+    }
+    .sk-spinner-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* 7. Loading Skeleton */
+    .sk-skeleton-wrap { padding: 4px; width: 100%; max-width: 260px; }
+    .sk-skel {
+      background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+      background-size: 200% 100%;
+      animation: sk-shimmer 1.4s ease infinite;
+      border-radius: 6px;
+    }
+    @keyframes sk-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .sk-skel-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .sk-skel-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
+    .sk-skel-lines { flex: 1; }
+    .sk-skel-line { height: 10px; margin-bottom: 6px; }
+    .sk-skel-line:last-child { width: 60%; margin-bottom: 0; }
+    .sk-skel-block { height: 80px; width: 100%; margin-bottom: 12px; border-radius: 10px; }
+    .sk-skel-short { height: 10px; width: 40%; }
+
+    /* 8. Onboarding State */
+    .sk-onboarding {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+    .sk-onboarding-steps {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .sk-step-dot {
+      width: 28px;
+      height: 4px;
+      border-radius: 100px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .sk-step-dot.active { background: var(--accent); }
+    .sk-onboarding-emoji {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block;
+      animation: sk-float 3s ease-in-out infinite;
+    }
+    @keyframes sk-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .sk-onboarding h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .sk-onboarding p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .sk-onboarding-actions { display: flex; gap: 8px; justify-content: center; }
+
+    /* ── CODE BLOCK ── */
+    .code-section { background: #1A1917; border-radius: var(--radius); overflow: hidden; margin-top: 48px; }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid #333;
+    }
+    .code-title { font-size: 12px; color: #888; font-weight: 500; }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .code-dot:nth-child(1) { background: #FF5F57; }
+    .code-dot:nth-child(2) { background: #FFBD2E; }
+    .code-dot:nth-child(3) { background: #28CA41; }
+    .code-body { padding: 24px; overflow-x: auto; }
+    .code-body pre {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #E2E0D8;
+      margin: 0;
+      white-space: pre;
+    }
+    .code-kw { color: #C792EA; }
+    .code-str { color: #C3E88D; }
+    .code-tag { color: #89DDFF; }
+    .code-attr { color: #FFCB6B; }
+    .code-cm { color: #546E7A; }
+
+    /* ── INSTALL SECTION ── */
+    .install-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .install-cmd {
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+    .feature-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature-card p { font-size: 13px; color: var(--text-2); line-height: 1.5; font-weight: 300; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px;
+      text-align: center;
+      color: var(--text-3);
+      font-size: 13px;
+    }
+    footer a { color: var(--text-2); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+  </style>
+
+
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">State<span>Kit</span></a>
+    <ul class="nav-links">
+      <li><a href="#components">Components</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="https://github.com/roynick365/statekit">GitHub</a></li>
+      <li><a href="https://github.com/roynick365/statekit" class="nav-cta">Star on GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Open source · MIT licensed</div>
+    <h1>UI states developers<br><em>hate designing.</em><br>We did it for you.</h1>
+    <p>A lightweight, copy-paste library of beautifully crafted empty, loading, error, and success states for modern web apps.</p>
+    <div class="hero-actions">
+      <a href="#components" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+        Browse Components
+      </a>
+      <a href="https://github.com/roynick365/statekit" class="btn btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"></path></svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Components</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Dependencies</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&lt;5kb</div>
+      <div class="stat-label">CSS Size</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Copy-paste ready</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- COMPONENTS -->
+  <div class="section" id="components">
+    <div class="section-header">
+      <div class="section-tag">Components</div>
+      <h2 class="section-title">8 states, production ready</h2>
+      <p class="section-sub">Every state your app needs, designed with care.</p>
+    </div>
+
+    <div class="component-grid">
+
+      <!-- 1. Empty State -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-empty">
+            <div class="sk-empty-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18M3 12h18M3 17h12"></path></svg>
+            </div>
+            <h3>Nothing here yet</h3>
+            <p>Get started by creating your first project.</p>
+            <button class="sk-btn">+ Create Project</button>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Empty State</span>
+          <span class="component-tag tag-empty">Empty</span>
+        </div>
+      </div>
+
+      <!-- 2. Empty Search -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-empty-search">
+            <div class="sk-search-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+            </div>
+            <div class="sk-search-query">"dashboard"</div>
+            <h3>No results found</h3>
+            <p>Try a different keyword or check your spelling.</p>
+            <button class="sk-btn sk-btn-ghost">Clear search</button>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Empty Search</span>
+          <span class="component-tag tag-empty">Empty</span>
+        </div>
+      </div>
+
+      <!-- 3. Error State -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-error">
+            <div class="sk-error-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h3>Something went wrong</h3>
+            <p>We couldn't load your data. Please try again.</p>
+            <div class="sk-error-actions">
+              <button class="sk-btn sk-btn-error">Try again</button>
+              <button class="sk-btn sk-btn-ghost">Go back</button>
+            </div>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Error State</span>
+          <span class="component-tag tag-error">Error</span>
+        </div>
+      </div>
+
+      <!-- 4. 404 Page -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-404">
+            <div class="sk-404-number">404</div>
+            <h3>Page not found</h3>
+            <p>The page you're looking for doesn't exist or has been moved.</p>
+            <button class="sk-btn">← Back to Home</button>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">404 Page</span>
+          <span class="component-tag tag-error">Error</span>
+        </div>
+      </div>
+
+      <!-- 5. Success State -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-success">
+            <div class="sk-success-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A7A4A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3>Payment successful!</h3>
+            <p>Your order has been confirmed. A receipt has been sent to your email.</p>
+            <button class="sk-btn sk-btn-success">View Order</button>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Success Confirmation</span>
+          <span class="component-tag tag-success">Success</span>
+        </div>
+      </div>
+
+      <!-- 6. Loading Spinner -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-spinner-wrap">
+            <div class="sk-spinner"></div>
+            <div class="sk-spinner-label">Loading your data…</div>
+            <div class="sk-spinner-sub">This won't take long</div>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Loading Spinner</span>
+          <span class="component-tag tag-loading">Loading</span>
+        </div>
+      </div>
+
+      <!-- 7. Loading Skeleton -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-skeleton-wrap">
+            <div class="sk-skel-row">
+              <div class="sk-skel sk-skel-avatar"></div>
+              <div class="sk-skel-lines">
+                <div class="sk-skel sk-skel-line"></div>
+                <div class="sk-skel sk-skel-line"></div>
+              </div>
+            </div>
+            <div class="sk-skel sk-skel-block"></div>
+            <div class="sk-skel sk-skel-short"></div>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Loading Skeleton</span>
+          <span class="component-tag tag-loading">Loading</span>
+        </div>
+      </div>
+
+      <!-- 8. Onboarding -->
+      <div class="component-card">
+        <div class="component-preview">
+          <div class="sk-onboarding">
+            <div class="sk-onboarding-steps">
+              <div class="sk-step-dot active"></div>
+              <div class="sk-step-dot active"></div>
+              <div class="sk-step-dot"></div>
+            </div>
+            <span class="sk-onboarding-emoji">👋</span>
+            <h3>Set up your workspace</h3>
+            <p>Tell us a bit about yourself so we can personalise your experience.</p>
+            <div class="sk-onboarding-actions">
+              <button class="sk-btn sk-btn-ghost">Back</button>
+              <button class="sk-btn">Continue →</button>
+            </div>
+          </div>
+        </div>
+        <div class="component-meta">
+          <span class="component-name">Onboarding State</span>
+          <span class="component-tag tag-onboarding">Onboarding</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CODE EXAMPLE -->
+    <div class="code-section">
+      <div class="code-header">
+        <div class="code-dots">
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+        </div>
+        <div class="code-title">empty-state.html</div>
+      </div>
+      <div class="code-body">
+<pre><span class="code-cm">&lt;!-- StateKit — Empty State --&gt;</span>
+<span class="code-cm">&lt;!-- Copy this block directly into your project --&gt;</span>
+
+<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-str">"sk-empty"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-str">"sk-empty-icon"</span><span class="code-tag">&gt;</span>
+    <span class="code-cm">&lt;!-- swap icon as needed --&gt;</span>
+    <span class="code-tag">&lt;svg</span> <span class="code-attr">width</span>=<span class="code-str">"24"</span> <span class="code-attr">height</span>=<span class="code-str">"24"</span> <span class="code-attr">viewBox</span>=<span class="code-str">"0 0 24 24"</span> <span class="code-attr">fill</span>=<span class="code-str">"none"</span>
+      <span class="code-attr">stroke</span>=<span class="code-str">"currentColor"</span> <span class="code-attr">stroke-width</span>=<span class="code-str">"1.8"</span><span class="code-tag">&gt;</span>
+      <span class="code-tag">&lt;path</span> <span class="code-attr">d</span>=<span class="code-str">"M3 7h18M3 12h18M3 17h12"</span><span class="code-tag">/&gt;</span>
+    <span class="code-tag">&lt;/svg&gt;</span>
+  <span class="code-tag">&lt;/div&gt;</span>
+  <span class="code-tag">&lt;h3&gt;</span>Nothing here yet<span class="code-tag">&lt;/h3&gt;</span>
+  <span class="code-tag">&lt;p&gt;</span>Get started by creating your first project.<span class="code-tag">&lt;/p&gt;</span>
+  <span class="code-tag">&lt;button</span> <span class="code-attr">class</span>=<span class="code-str">"sk-btn"</span><span class="code-tag">&gt;</span>+ Create Project<span class="code-tag">&lt;/button&gt;</span>
+<span class="code-tag">&lt;/div&gt;</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- INSTALL -->
+  <div class="section" id="install">
+    <div class="section-header">
+      <div class="section-tag">Installation</div>
+      <h2 class="section-title">Get started in seconds</h2>
+      <p class="section-sub">No build tools. No config. Just copy and use.</p>
+    </div>
+    <div class="install-box">
+      <div class="install-cmd">npm install statekit-ui</div>
+      <a href="https://github.com/roynick365/statekit" class="btn btn-primary">View on GitHub →</a>
+    </div>
+    <div class="features-grid">
+
+  <div class="feature-card">
+    <div class="feature-icon" style="background:#EEF2FD;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+      </svg>
+    </div>
+    <h4>Ready to use</h4>
+    <p>Components are plain HTML and CSS. Copy what you need and drop it into your project.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon" style="background:#EDFAF3;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M13 2L3 14h7l-1 8 10-12h-7z"></path>
+      </svg>
+    </div>
+    <h4>No dependencies</h4>
+    <p>No frameworks or build tools required. Works with any stack or setup.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon" style="background:#F5F0FF;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M2 12h2M20 12h2M12 2v2M12 20v2"></path>
+      </svg>
+    </div>
+    <h4>Easy to adapt</h4>
+    <p>Styles are driven by CSS variables, so adjusting colors and spacing is straightforward.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon" style="background:#FEF3E2;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 2a7 7 0 00-7 7v4a3 3 0 003 3h8a3 3 0 003-3V9a7 7 0 00-7-7z"></path>
+      </svg>
+    </div>
+    <h4>Accessible by default</h4>
+    <p>Uses semantic markup and supports accessible patterns without extra setup.</p>
+  </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>StateKit — Open Source · <a href="https://github.com/roynick365/statekit">GitHub</a> · MIT License</p>
+    <p style="margin-top:8px;">Built with care for the developer community.</p>
+  </footer>
+
+
+
+
+                <script>// Write JavaScript here</script>
+            
+        
+    </div></body>
