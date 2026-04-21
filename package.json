@@ -26,12 +26,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/statekit"
+    "url": "https://github.com/roynick365/statekit/"
   },
-  "homepage": "https://yourusername.github.io/statekit",
+  "homepage": "https://roynick365.github.io/statekit/",
   "bugs": {
-    "url": "https://github.com/yourusername/statekit/issues"
+    "url": "https://github.com/roynick365/statekit/issues"
   },
-  "author": "Michel Kite",
+  "author": "roynick365",
   "license": "MIT"
 }
